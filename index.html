@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Music Playlist Manager - Live Demo</title>
+<style>
+body{font-family:Arial;background:#121212;color:white;padding:20px;max-width:600px;margin:auto}
+h1{text-align:center;color:#1DB954}
+.card{background:#1e1e1e;padding:20px;border-radius:12px;margin-top:20px}
+input{width:70%;padding:10px;border-radius:6px;border:none}
+button{padding:10px 15px;border-radius:6px;border:none;background:#1DB954;color:white;font-weight:bold;cursor:pointer;margin:5px}
+button:hover{background:#1ed760}
+.playlist-item{background:#2a2a2a;padding:10px;margin:5px 0;border-radius:6px}
+.now-playing{background:#333;padding:10px;border-radius:6px;color:#1DB954;margin-top:10px}
+small{color:#aaa}
+</style>
+</head>
+<body>
+
+<h1>🎵 Music Playlist Manager</h1>
+<p style="text-align:center"><small>Live Version | Original C++ logic: string playlist[MAX_SONGS=5]</small></p>
+
+<div class="card">
+<h3>1. Add Song (C++: playlist[songCount])</h3>
+<input id="songInput" placeholder="Enter song title e.g. Shatta Wale - On God">
+<button onclick="addSong()">Add Song</button>
+<button onclick="viewPlaylist()">View Playlist</button>
+<button onclick="playNext()">Play Next (Shift Array)</button>
+<div id="message"></div>
+</div>
+
+<div class="card">
+<h3>--- Current Playlist ---</h3>
+<div id="playlistDisplay">Your playlist is empty.</div>
+<div id="nowPlaying"></div>
+</div>
+
+<div class="card">
+<small>
+<b>C++ to JS Mapping for Lecturer:</b><br>
+- const int MAX_SONGS = 5 (same)<br>
+- string playlist[5] => let playlist = []<br>
+- displayPlaylist() => viewPlaylist()<br>
+- Shift logic: for(i=0; i<count-1; i++) playlist[i]=playlist[i+1] (same as C++)<br>
+- Repo: <a href="https://github.com/bkumah61-web/Music-playlist-manager" style="color:#1DB954">View C++ Source (main.cpp)</a>
+</small>
+</div>
+
+<script>
+const MAX_SONGS = 5;
+let playlist = [];
+let songCount = 0;
+
+function displayMessage(text, isError=false){
+  document.getElementById('message').innerHTML = `<p style="color:${isError?'#ff5555':'#1DB954'}">${text}</p>`;
+  setTimeout(()=>document.getElementById('message').innerHTML='',3000);
+}
+
+function viewPlaylist(){
+  const div = document.getElementById('playlistDisplay');
+  if(songCount === 0){
+    div.innerHTML = "Your playlist is empty.";
+  } else {
+    let html = "";
+    for(let i=0; i<songCount; i++){
+      html += `<div class="playlist-item">${i+1}. ${playlist[i]}</div>`;
+    }
+    div.innerHTML = html;
+  }
+}
+
+function addSong(){
+  const input = document.getElementById('songInput');
+  const title = input.value.trim();
+  if(title === ""){ displayMessage("Enter a song title!", true); return; }
+
+  if(songCount < MAX_SONGS){
+    playlist[songCount] = title; // same as C++ playlist[songCount]
+    songCount++;
+    input.value = "";
+    displayMessage("Song added successfully!");
+    viewPlaylist();
+  } else {
+    displayMessage(`Playlist is full! Max limit is ${MAX_SONGS}.`, true);
+  }
+}
+
+function playNext(){
+  const nowDiv = document.getElementById('nowPlaying');
+  if(songCount > 0){
+    nowDiv.innerHTML = `<div class="now-playing">Now playing: ${playlist[0]} 🎶</div>`;
+    // Shift songs up - same logic as C++
+    for(let i=0; i<songCount-1; i++){
+      playlist[i] = playlist[i+1];
+    }
+    songCount--;
+    viewPlaylist();
+  } else {
+    nowDiv.innerHTML = `<div class="now-playing">No songs in the playlist to play.</div>`;
+  }
+}
+</script>
+
+</body>
+</html>
